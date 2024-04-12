@@ -229,9 +229,35 @@ struct ColoringImage {
         guard let provider:CGDataProvider = CGDataProvider(data: maskData) else {return (.null,nil)}
         
         let scale = UIScreen.main.scale
+//        return (CGRect(x: 0, y: 0,
+//                       width: self.width / Int(scale),
+//                       height: self.height / Int(scale))
+//                ,CGImage(width: self.width,
+//                       height: self.height,
+//                       bitsPerComponent: 8,
+//                       bitsPerPixel: 8,
+//                       bytesPerRow: self.width,
+//                       space: CGColorSpaceCreateDeviceGray(),
+//                       bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue),
+//                       provider: provider, decode: nil,
+//                       shouldInterpolate: true, intent: .defaultIntent))
+        
+        let cgImage = CGImage(width: self.width,
+                              height: self.height,
+                              bitsPerComponent: 8,
+                              bitsPerPixel: 8,
+                              bytesPerRow: self.width,
+                              space: CGColorSpaceCreateDeviceGray(),
+                              bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue),
+                              provider: provider, decode: nil,
+                              shouldInterpolate: true, intent: .defaultIntent)
+        let img = UIImage.init(cgImage: cgImage!)
+        
+        
+        
         return (CGRect(x: 0, y: 0,
-                       width: self.width / Int(scale),
-                       height: self.height / Int(scale))
+                       width: self.width,
+                       height: self.height)
                 ,CGImage(width: self.width,
                        height: self.height,
                        bitsPerComponent: 8,

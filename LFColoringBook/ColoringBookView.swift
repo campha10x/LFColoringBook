@@ -67,8 +67,10 @@ class ColoringBookView: UIView {
     
     
     override var intrinsicContentSize: CGSize{
-        return CGSize(width: pixelSize.width / UIScreen.main.scale,
-                      height: pixelSize.height / UIScreen.main.scale)
+//        return CGSize(width: pixelSize.width / UIScreen.main.scale,
+//                      height: pixelSize.height / UIScreen.main.scale)
+        return CGSize(width: pixelSize.width ,
+                      height: pixelSize.height)
     }
     
     init(coloringImage:ColoringImage){
@@ -92,7 +94,8 @@ class ColoringBookView: UIView {
                                        bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
         
         //Add scale factor to the context since we created in pixel size
-        let transform = CGAffineTransform.init(scaleX:UIScreen.main.scale, y: UIScreen.main.scale)
+//        let transform = CGAffineTransform.init(scaleX:UIScreen.main.scale, y: UIScreen.main.scale)
+        let transform = CGAffineTransform.init(scaleX:1, y: 1)
         self.frozenContext.concatenate(transform)
         
         //Set line Cap and Join, these settings work fine with this approach, otherwise the redraw looks funny
@@ -101,9 +104,12 @@ class ColoringBookView: UIView {
         
         
         self.coloringLayer = CALayer()
+//        coloringLayer.frame = CGRect(origin: .zero,
+//                                            size: CGSize(width: pixelSize.width / UIScreen.main.scale,
+//                                                         height: pixelSize.height / UIScreen.main.scale))
         coloringLayer.frame = CGRect(origin: .zero,
-                                            size: CGSize(width: pixelSize.width / UIScreen.main.scale,
-                                                         height: pixelSize.height / UIScreen.main.scale))
+                                            size: CGSize(width: pixelSize.width,
+                                                         height: pixelSize.height))
         coloringLayer.contents = self.coloringImage.cgImage
         self.layer.addSublayer(coloringLayer)
     }
@@ -152,8 +158,10 @@ class ColoringBookView: UIView {
         self.generatingMask = true
         let strokeID = activeStroke?.id
         DispatchQueue.global(qos: .background).async {
-             let (clipRect, mask) = self.coloringImage.getFillMaskAt(x: Int(firstLocation.x * UIScreen.main.scale),
-                                                           y: Int(firstLocation.y * UIScreen.main.scale))
+//             let (clipRect, mask) = self.coloringImage.getFillMaskAt(x: Int(firstLocation.x * UIScreen.main.scale),
+//                                                           y: Int(firstLocation.y * UIScreen.main.scale))
+            let (clipRect, mask) = self.coloringImage.getFillMaskAt(x: Int(firstLocation.x ),
+                                                          y: Int(firstLocation.y))
             
             self.generatingMask = false
             if let mask = mask{

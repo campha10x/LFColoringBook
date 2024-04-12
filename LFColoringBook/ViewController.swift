@@ -32,7 +32,8 @@ class ViewController: UIViewController {
     private var toolsHiddenState:Bool = false
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        print(self.view.frame)
+        print(UIScreen.main.bounds)
         //Set the controller as ScrollView delegate and change the pan gesture to two fingers for easier drawing
         self.scrollView.delegate = self
         self.scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
@@ -49,7 +50,12 @@ class ViewController: UIViewController {
         let (image,optimized) = self.retrieveSavedImage()
         if let image = image ?? UIImage(named:"mandala1.png"){
            let optimized = optimized ?? true
-            self.createColoringBookView(with: image, optimized: optimized)
+            let heightSTatusBar = view.window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
+//            let heigh = UIScreen.main.bounds.height - 50 - 50
+            let heigh: CGFloat = 250
+            let width = image.size.width * heigh / image.size.height
+            self.createColoringBookView(with: self.resizeImage(image: image, targetSize: CGSize.init(width: width  , height: heigh))!, optimized: false)
+//            self.createColoringBookView(with: image, optimized: false)
         }
         
     }
@@ -391,6 +397,32 @@ extension ViewController:ColoringBookViewDelegate{
             tool.isHidden = self.toolsHiddenState
         }
         self.checkColoringBookState()
+    }
+    
+    func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage? {
+        let size = image.size
+        
+        let widthRatio  = targetSize.width  / size.width
+        let heightRatio = targetSize.height / size.height
+        
+        // Figure out what our orientation is, and use that to form the rectangle
+        var newSize: CGSize
+        if(widthRatio > heightRatio) {
+            newSize = CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
+        } else {
+            newSize = CGSize(width: size.width * widthRatio, height: size.height * widthRatio)
+        }
+        
+        // This is the rect that we've calculated out and this is what is actually used below
+        let rect = CGRect(origin: .zero, size: newSize)
+        
+        // Actually do the resizing to the rect using the ImageContext stuff
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+        image.draw(in: rect)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage
     }
     
     
